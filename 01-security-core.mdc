@@ -1,0 +1,101 @@
+# Multi-Tenant Security Rules
+
+## Never Hardcode Rule
+
+**NEVER hardcode any values in code:**
+* Use `process.env.VARIABLE_NAME || 'fallback'` for all configuration
+* No hardcoded tenant/organization IDs (even for development)
+* No hardcoded API keys, URLs, or business rules
+* No hardcoded time periods, capacities, or limits
+
+## Multi-Tenant Access Control
+
+**Always validate organization access server-side:**
+* Use `requireOrganizationAccess()` middleware on ALL org endpoints
+* Use `req.resolvedOrgId` (validated) not `req.params.orgId` (untrusted)
+* Frontend org selection is UI convenience only, never authorization
+* Implement user-organization membership validation in database
+
+## Client Storage Security
+
+**Client storage is UI state ONLY, never authorization:**
+* Use localStorage/sessionStorage for themes, preferences, UI state
+* Never store auth tokens, user roles, or organization IDs client-side
+* All permissions must come from server validation via API calls
+* Implement proper cache invalidation on context changes
+
+## Input Validation
+
+**Always validate with Zod schemas:**
+* Validate all request body, params, and query parameters
+* Use middleware pattern: `validateInput(schema)`
+* Return structured error responses with validation details
+* Sanitize user inputs to prevent XSS using DOMPurify
+
+## API Security Patterns
+
+**Secure endpoint pattern:**
+```
+app.verb('/api/organizations/:orgId/resource',
+  isAuthenticated,
+  requireOrganizationAccess(),
+  requirePermission(PERMISSION),
+  validateInput(schema),
+  handler
+);
+```
+
+**Security requirements:**
+* Derive user identity from authenticated session, never request body
+* Use URL parameters for resource identification
+* Check permissions before any data access
+* Log security events with structured logging
+
+## Authentication & Session Management
+
+**Session security requirements:**
+* Use secure, httpOnly cookies for session tokens
+* Implement absolute and idle session timeouts
+* Rotate session tokens on privilege changes
+* Clear sessions completely on logout
+* Implement concurrent session limits per user
+
+**Password requirements:**
+* Enforce strong password policy (min 12 chars, complexity)
+* Use bcrypt/argon2 for password hashing (never MD5/SHA1)
+* Implement account lockout after failed attempts
+* Require password change on first login
+* Never log passwords, even hashed
+
+## Secret Management
+
+**Secret handling:**
+* Never commit secrets to version control
+* Use secret management service (Vault, AWS Secrets Manager)
+* Implement secret rotation schedule
+* Use different secrets per environment
+* Monitor for exposed secrets in code
+
+**API key patterns:**
+* Generate cryptographically secure keys
+* Implement key rotation capability
+* Scope keys to specific permissions
+* Log key usage for anomaly detection
+
+## Environment Configuration
+
+**Required production environment variables:**
+* `BOOTSTRAP_SECRET` - Cryptographically secure (32+ chars)
+* `ALLOWED_ORIGINS` - HTTPS origins only in production
+* `DISABLE_BOOTSTRAP=true` - Disable privileged endpoints
+* `DATABASE_URL` - With SSL in production (`sslmode=require`)
+
+**Configuration pattern:**
+* Document all environment variables in `.env.example`
+* Validate required variables at application startup
+* Use different configurations for dev/staging/production
+* Prefix client variables appropriately (`VITE_`, `REACT_APP_`)
+
+---
+
+*Security-first development: validate server-side, never trust client data, use environment variables.*

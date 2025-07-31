@@ -1,0 +1,67 @@
+# Testing Patterns
+
+## Security Test Requirements
+
+When writing tests for API endpoints:
+
+**Mandatory security test cases:**
+* Unauthorized access (no authentication token)
+* Insufficient permissions (wrong role)
+* Cross-tenant access (wrong organization)
+* Input validation (malformed data)
+* SQL injection attempts (malicious input)
+* XSS attempts (script injection)
+* Rate limiting enforcement
+* Privilege escalation attempts
+
+**Database security testing:**
+* Prevent data leakage between organizations
+* Enforce organization scoping in all queries
+* Verify parameterized query usage
+* Test cross-organization access denial
+
+## API Endpoint Testing
+
+**Test structure requirements:**
+* Setup and cleanup test database before/after each test
+* Use realistic test data and scenarios
+* Verify both success and failure cases
+* Test edge cases and boundary conditions
+
+**Authentication testing:**
+* Test with valid admin, member, and invalid tokens
+* Verify token expiration handling
+* Test refresh token functionality
+* Validate session management
+
+## Frontend Component Testing
+
+**Component test requirements:**
+* Test loading, error, and success states
+* Mock API calls and server responses
+* Verify permission-based UI rendering
+* Test user interaction flows
+
+**Security-focused frontend tests:**
+* Verify client storage contains only UI state
+* Test permission validation before API calls
+* Validate input sanitization in components
+* Test cache invalidation on context changes
+
+## Environment Testing
+
+**Configuration validation:**
+* Test required environment variables in production
+* Verify bootstrap endpoint disabled in production
+* Test HTTPS enforcement and security headers
+* Validate CORS origin restrictions
+
+**Production readiness tests:**
+* Test with production-like environment variables
+* Verify rate limiting configuration
+* Test security header implementation
+* Validate SSL/TLS configuration
+
+---
+
+*Focus: Comprehensive security test coverage, realistic scenarios, production validation.*

@@ -1,0 +1,91 @@
+# Database & Performance Patterns
+
+## Data Privacy Patterns
+
+**PII handling:**
+* Identify and classify PII fields in database
+* Implement field-level encryption for sensitive data
+* Use data masking in non-production environments
+* Implement right-to-erasure (GDPR compliance)
+* Log all PII access for audit purposes
+
+**Data isolation:**
+* Implement row-level security in database
+* Use separate encryption keys per organization
+* Prevent data aggregation across organizations
+* Implement data retention policies
+
+## Performance Patterns
+
+**Response time targets:**
+* API endpoints: <200ms p95
+* Database queries: <100ms p95
+* Background jobs: implement progress tracking
+* Implement request timeouts (30s default)
+
+**Scalability considerations:**
+* Design for horizontal scaling
+* Use connection pooling for database
+* Implement circuit breakers for external services
+* Use queue for async operations
+
+## Query Optimization Rules
+
+When working in `server/storage/` directory:
+
+**Prevent N+1 queries:**
+* Never fetch related data in loops
+* Use joins and eager loading for related data
+* Implement single optimized queries with proper JOINs
+* Cache expensive aggregation queries
+
+**Required database indexes:**
+* Add indexes for all foreign key relationships
+* Create composite indexes for common query patterns
+* Index organization filtering columns
+* Use `CREATE INDEX CONCURRENTLY` for production
+
+**Critical indexes for multi-tenant platform:**
+* `idx_users_organization_id` on `users(organization_id)`
+* `idx_user_roles_user_org` on `user_roles(user_id, organization_id)`
+* `idx_matches_mentor_org` on `matches(mentor_user_id, organization_id)`
+
+## Transaction Patterns
+
+**Multi-step operation requirements:**
+* Use database transactions for data consistency
+* Handle transaction rollback on errors
+* Validate business rules within transactions
+* Log transaction failures with context
+
+## Caching Implementation
+
+**Caching strategies:**
+* Cache expensive operations with memoization
+* Set appropriate cache TTL (5 minutes for stats)
+* Implement cache invalidation on data changes
+* Monitor cache hit/miss rates
+
+**Performance monitoring:**
+* Log slow queries (>1000ms)
+* Monitor database connection health
+* Track query performance in production
+* Use `EXPLAIN ANALYZE` for optimization
+
+## Schema Best Practices
+
+**Table design requirements:**
+* Use UUIDs for primary keys
+* Include `organization_id` in all tenant-scoped tables
+* Add `created_at` and `updated_at` timestamps
+* Export Zod schemas for validation
+
+**Query scoping:**
+* Always scope queries to organization
+* Use parameterized queries to prevent SQL injection
+* Validate organization membership before data access
+* Implement soft deletes for audit trails
+
+---
+
+*Focus: Query optimization, proper indexing, caching, transaction safety.*

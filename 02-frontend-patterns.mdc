@@ -1,0 +1,55 @@
+# Frontend Component Patterns
+
+## React Component Standards
+
+When working in `client/src/components/` directory:
+
+**Component structure requirements:**
+* Props interface at top with organization context
+* Use React Query for all data fetching
+* Handle loading, error, and empty states
+* Implement proper error boundaries
+* Use Tailwind for styling with consistent spacing
+
+**Data fetching patterns:**
+* Always use hierarchical query keys: `['/api/organizations', orgId, 'resource']`
+* Enable queries conditionally: `enabled: !!orgId`
+* Implement cache invalidation on context changes
+* Use `useCallback` for expensive operations
+
+**Permission validation:**
+* Server validates all permissions via API calls
+* Use `useHasPermission(permission, orgId)` hook pattern
+* Never rely on client-side role checking
+* Hide UI elements based on server-validated permissions
+
+## Form Handling
+
+**Form requirements:**
+* Use React Hook Form + Zod resolver
+* Implement comprehensive validation schemas
+* Handle form errors with structured messages
+* Reset forms after successful submission
+
+## Security Patterns
+
+**Client storage rules:**
+* Use for UI preferences only (theme, sidebar state, selected tabs)
+* Never store auth tokens, roles, or organization IDs
+* Clear sensitive UI state on logout/context change
+
+**XSS prevention:**
+* Use DOMPurify for user-generated HTML content
+* Rely on React's default escaping for text
+* Never use `dangerouslySetInnerHTML` without sanitization
+* Whitelist allowed HTML tags and attributes
+
+**API request security:**
+* Validate organization access before making requests
+* Include credentials in requests: `credentials: 'include'`
+* Handle authentication errors gracefully
+* Implement request retry logic for network failures
+
+---
+
+*Focus: Server-validated permissions, proper data fetching, consistent UI patterns.*

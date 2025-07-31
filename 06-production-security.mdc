@@ -1,0 +1,69 @@
+# Production Security & Deployment
+
+## Environment Validation
+
+**Required environment variables for production:**
+* Validate all required variables at application startup
+* Ensure HTTPS origins only in ALLOWED_ORIGINS
+* Verify BOOTSTRAP_SECRET is cryptographically secure (32+ characters)
+* Confirm DISABLE_BOOTSTRAP=true in production
+* Check DATABASE_URL includes SSL configuration
+
+**Production configuration requirements:**
+* Set NODE_ENV=production
+* Enable rate limiting and security headers
+* Configure secure cookies and HTTPS enforcement
+* Set appropriate log levels and monitoring
+
+## Container Security
+
+**Docker security requirements:**
+* Use specific Node.js version (not 'latest')
+* Create and use non-root user
+* Set security environment variables at build time
+* Implement health checks for container monitoring
+* Use minimal base images (alpine variants)
+
+## Security Monitoring
+
+**Security event logging:**
+* Log authentication failures and authorization denials
+* Monitor privileged endpoint access attempts
+* Track rate limiting violations and suspicious patterns
+* Implement different severity levels for events
+
+**Production monitoring requirements:**
+* Set up alerts for critical security events
+* Monitor database query performance
+* Track application health and uptime
+* Implement security incident response procedures
+
+## Pre-Deployment Checklist
+
+**Automated security checks:**
+* Validate environment variable configuration
+* Verify bootstrap endpoint is disabled
+* Check HTTPS-only origin configuration
+* Confirm strong bootstrap secret generation
+
+**Manual security verification:**
+* Review security headers configuration
+* Verify rate limiting is properly configured
+* Test CORS origin restrictions
+* Validate SSL/TLS certificate configuration
+
+**Infrastructure security:**
+* Use private subnets for application servers
+* Configure Web Application Firewall (WAF)
+* Implement DDoS protection measures
+* Set up intrusion detection systems
+
+**Database security:**
+* Enable encryption at rest and in transit
+* Configure database firewall rules
+* Implement regular security patches
+* Set up backup and disaster recovery
+
+---
+
+*Security is continuous: validate, monitor, and update regularly.*

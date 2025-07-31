@@ -1,0 +1,105 @@
+# API Endpoint Patterns
+
+## Express Route Standards
+
+When working in `server/routes/` directory:
+
+**Secure endpoint requirements:**
+* Apply security middleware stack: `isAuthenticated`, `requireOrganizationAccess()`, `requirePermission()`, `validateInput()`
+* Use `req.resolvedOrgId` for validated organization ID
+* Implement comprehensive error handling with try/catch
+* Return consistent JSON response format
+
+**Response format standards:**
+* Success: `{ success: true, data: result }`
+* Error: `{ success: false, error: message, code?: string }`
+* Use appropriate HTTP status codes (200, 201, 400, 401, 403, 404, 500)
+
+## Security Configuration
+
+**Security headers requirements:**
+* Configure comprehensive helmet settings (HSTS, CSP, XSS protection)
+* Implement strict CORS policy with origin validation
+* Force HTTPS in production with redirect middleware
+* Set secure cookie options (httpOnly, secure, sameSite)
+
+**Rate limiting implementation:**
+* Different limits for different endpoint types
+* Log rate limit violations as security events
+* Use sliding window rate limiting
+* Implement IP-based and user-based limits
+
+## Error Handling
+
+**Structured error handling:**
+* Create custom error classes (AppError, ValidationError, AuthorizationError)
+* Implement error middleware for consistent responses
+* Log security events with structured data
+* Never expose internal implementation details
+
+**Security event logging:**
+* Log authentication failures, authorization denials, rate limit violations
+* Include user context, IP address, user agent, timestamp
+* Implement different severity levels (low, medium, high, critical)
+* Send alerts for critical security events
+
+## Audit Trail Requirements
+
+**What to audit:**
+* All authentication events (login, logout, failed attempts)
+* Permission changes and role assignments
+* Data modifications (CREATE, UPDATE, DELETE)
+* Sensitive data access (exports, bulk operations)
+* Configuration changes
+
+**Audit log structure:**
+* Include: timestamp, user_id, organization_id, action, resource, IP, user_agent
+* Store audit logs separately from application logs
+* Implement tamper-proof logging (append-only)
+* Retain logs according to compliance requirements
+
+## API Evolution Patterns
+
+**Versioning strategy:**
+* Use URL versioning: `/api/v1/`, `/api/v2/`
+* Maintain backwards compatibility for 6 months minimum
+* Document breaking changes in CHANGELOG
+* Use feature flags for gradual rollouts
+
+**Deprecation process:**
+* Add deprecation headers to old endpoints
+* Log usage of deprecated endpoints
+* Send notifications to affected clients
+* Provide migration guides
+
+## Error Response Patterns
+
+**User-facing errors:**
+* Provide helpful error messages without exposing internals
+* Include error codes for programmatic handling
+* Suggest corrective actions when possible
+* Never expose stack traces in production
+
+**Internal error handling:**
+* Log full error context internally
+* Implement error budgets and alerting
+* Track error rates by endpoint
+* Implement graceful degradation
+
+## Input Validation
+
+**Validation middleware pattern:**
+* Use Zod schemas for all input validation
+* Validate request body, params, and query parameters
+* Return detailed validation errors to clients
+* Sanitize inputs to prevent injection attacks
+
+**Business logic validation:**
+* Check permissions before any data access
+* Validate organization membership for all operations
+* Implement proper authorization checks
+* Log privilege escalation attempts
+
+---
+
+*Focus: Security middleware, consistent responses, comprehensive validation, structured logging.*
